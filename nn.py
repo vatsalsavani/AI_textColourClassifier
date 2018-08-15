@@ -57,10 +57,20 @@ testOutput = [i[1] for i in testingData]
 
 # Neural Network
 
+# Function to calculate network accuracy
+def calc_accuracy(npArr1, npArr2):
+    common = 0
+    for i in range(len(npArr1)-1):
+        for j in range(len(npArr1[i])-1):
+            if npArr1[i][j] == npArr2[i][j]:
+                common += 1
+    return common/len(npArr1)*100
+
+
 # Parameters
-learningRate = 0.001
+learningRate = 0.01
 epoch = 3000
-interval = 150
+interval = int(epoch/15)
 
 # Network Parameters
 numInputs = 3  # Number of total inputs - input nodes
@@ -72,7 +82,7 @@ numOutputs = 2  # Number of total outputs - output nodes
 inputs = tf.placeholder('float', [None, numInputs])
 targets = tf.placeholder('float', [len(trainInput), numOutputs])
 
-#Weights and Biases
+# Weights and Biases
 weights = {
     # Inputs to Hidden Layer 1
     'hL1': tf.Variable(tf.random_normal([numInputs, hiddenLayer1])),
@@ -134,6 +144,13 @@ with tf.Session() as sess:
 
     print('\nModel Predicting Begins . . .')
     for i in range(testDataSize):
+        correctOutput.append(np.rint(testOutput[i]))
+        predictedOutput.append(
+            np.rint(sess.run(model, feed_dict={inputs: [testInput[i]]})[0]))
 
-        print('Actual:', testOutput[i], 'Predicted:',  np.rint(
-            sess.run(model, feed_dict={inputs: [testInput[i]]})))
+        print('Actual:', correctOutput[i], 'Predicted:', predictedOutput[i])
+
+    print()
+    print('* '*10)
+    print('Accuracy : {}%'.format(calc_accuracy(correctOutput, predictedOutput)))
+    print('* '*10)
