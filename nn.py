@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import csv
 import random
+import time
 
 # Dataset creation and editing
 # Output class identification : [black, white]
@@ -74,8 +75,8 @@ interval = int(epoch/15)
 
 # Network Parameters
 numInputs = 3  # Number of total inputs - input nodes
-hiddenLayer1 = 5  # Number of neurons in hidden layer 1
-hiddenLayer2 = 5  # Number of neurons in hidden layer 1
+hiddenLayer1 = 7  # Number of neurons in hidden layer 1
+hiddenLayer2 = 7  # Number of neurons in hidden layer 1
 numOutputs = 2  # Number of total outputs - output nodes
 
 # Placeholders
@@ -130,6 +131,7 @@ with tf.Session() as sess:
     sess.run(init)
 
     # Training
+    startTime = time.time()
     print('Model Training Begins . . .')
     for i in range(1, (epoch + 1)):
         sess.run(optimizer, feed_dict={
@@ -137,6 +139,7 @@ with tf.Session() as sess:
         if i % interval == 0:
             print('Epoch', i, '|', 'Loss:', sess.run(
                 loss, feed_dict={inputs: trainInput, targets: trainOutput}))
+    timeTaken = time.time()-startTime
 
     # Prediction and Testing
     correctOutput = []
@@ -153,4 +156,9 @@ with tf.Session() as sess:
     print()
     print('* '*10)
     print('Accuracy : {}%'.format(calc_accuracy(correctOutput, predictedOutput)))
+    print('* '*10)
+
+    print()
+    print('* '*10)
+    print('Time taken to train model:', timeTaken)
     print('* '*10)
